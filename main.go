@@ -1,31 +1,33 @@
 package main
 
 import (
-	"fmt"
+	"math/rand"
+
 	"github.com/zawawahoge/binary-tree/bst"
 )
 
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
 func main() {
-	fmt.Println("Index tree")
 	binarySearchTree := bst.NewBinarySearchTree()
-	data := map[int]string{
-		1: "A",
-		2: "B",
-		3: "C",
+
+	N := 1000
+
+	for i := 0; i < N; i++ {
+		k := rand.Intn(N)
+		v := randomHashString(20)
+		binarySearchTree.Insert(k, v)
 	}
-	keys := []int{3, 2, 1}
-	for _, k := range keys {
-		binarySearchTree.Insert(k, data[k])
+	// for k, v := range data {
+	// 	binarySearchTree.Insert(k, v)
+	// }
+	binarySearchTree.PrintTree()
+}
+
+func randomHashString(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
-	fmt.Printf("tree = %#v\n", binarySearchTree)
-	for _, k := range keys {
-		fmt.Printf("key=%d, want=%s  ", k, data[k])
-		got, cnt := binarySearchTree.Search(k)
-		if got == nil {
-			fmt.Printf("not found; cnt=%d\n", cnt)
-		} else {
-			fmt.Printf("got=%s, cnt=%d\n", *got, cnt)
-		}
-	}
-	fmt.Println(binarySearchTree)
+	return string(b)
 }
