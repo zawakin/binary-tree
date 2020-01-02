@@ -1,10 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/zawawahoge/binary-tree/bst"
+)
 
 func main() {
 	fmt.Println("Index tree")
-	binarySearchTree := NewBinarySearchTree()
+	binarySearchTree := bst.NewBinarySearchTree()
 	data := map[int]string{
 		1: "A",
 		2: "B",

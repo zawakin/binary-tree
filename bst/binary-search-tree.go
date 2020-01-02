@@ -1,5 +1,8 @@
-package main
+package bst
 
+import (
+	"github.com/zawawahoge/binary-tree/core"
+)
 type binarySearchTreeNode struct {
 	key   int
 	value string
@@ -8,33 +11,15 @@ type binarySearchTreeNode struct {
 }
 
 type binarySearchTree struct {
-	IndexTree
+	core.IndexTree
 	root *binarySearchTreeNode
 }
 
 // NewBinarySearchTree is a constructor of binary search tree.
-func NewBinarySearchTree() IndexTree {
+func NewBinarySearchTree() core.IndexTree {
 	return &binarySearchTree{
 		root: nil,
 	}
-}
-
-// Search is a method to search node with key by binary search.
-func (t *binarySearchTree) Search(key int) (*string, int) {
-	cnt := 0
-	pointer := t.root
-	for pointer != nil {
-		cnt++
-		if key == pointer.key {
-			return &pointer.value, cnt
-		}
-		if key < pointer.key && pointer.left != nil {
-			pointer = pointer.left
-		} else if key > pointer.key && pointer.right != nil {
-			pointer = pointer.right
-		}
-	}
-	return nil, cnt
 }
 
 func newBinarySearchTreeNode(key int, value string) *binarySearchTreeNode {
@@ -44,6 +29,27 @@ func newBinarySearchTreeNode(key int, value string) *binarySearchTreeNode {
 		left:  nil,
 		right: nil,
 	}
+}
+
+// Search is a method to search node with key by binary search.
+func (t *binarySearchTree) Search(key int) (*string, int) {
+	node := search(t.root, key)
+	if node == nil {
+		return nil, 0
+	}
+	return node.value, 0
+}
+
+func search(node *binarySearchTreeNode, key int) *binarySearchTreeNode {
+	if key < node.key && node.left != nil {
+		return search(node.left, key)
+	} else if key > pointer.key && pointer.right != nil {
+		return search(node.right, key)
+	}
+	if key == node.key {
+		return &pointer
+	}
+	return nil
 }
 
 // Insert is a method to insert a node by binary search.
