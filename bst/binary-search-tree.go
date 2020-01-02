@@ -3,6 +3,7 @@ package bst
 import (
 	"github.com/zawawahoge/binary-tree/core"
 )
+
 type binarySearchTreeNode struct {
 	key   int
 	value string
@@ -37,17 +38,17 @@ func (t *binarySearchTree) Search(key int) (*string, int) {
 	if node == nil {
 		return nil, 0
 	}
-	return node.value, 0
+	return &node.value, 0
 }
 
 func search(node *binarySearchTreeNode, key int) *binarySearchTreeNode {
 	if key < node.key && node.left != nil {
 		return search(node.left, key)
-	} else if key > pointer.key && pointer.right != nil {
+	} else if key > node.key && node.right != nil {
 		return search(node.right, key)
 	}
 	if key == node.key {
-		return &pointer
+		return node
 	}
 	return nil
 }
@@ -58,20 +59,22 @@ func (t *binarySearchTree) Insert(key int, value string) {
 		t.root = newBinarySearchTreeNode(key, value)
 		return
 	}
-	pointer := t.root
-	for {
-		if key <= pointer.key {
-			if pointer.left == nil {
-				pointer.left = newBinarySearchTreeNode(key, value)
-				return
-			}
-			pointer = pointer.left
-		} else {
-			if pointer == nil {
-				pointer.right = newBinarySearchTreeNode(key, value)
-			}
-			pointer = pointer.right
+	insert(t.root, key, value)
+}
+
+func insert(node *binarySearchTreeNode, key int, value string) {
+	if key < node.key {
+		if node.left == nil {
+			node.left = newBinarySearchTreeNode(key, value)
+			return
 		}
+		insert(node.left, key, value)
+	} else {
+		if node.right == nil {
+			node.right = newBinarySearchTreeNode(key, value)
+			return
+		}
+		insert(node.right, key, value)
 	}
 }
 
