@@ -1,4 +1,4 @@
-package bst
+package B-bst
 
 import (
 	"fmt"
@@ -6,27 +6,27 @@ import (
 	"github.com/zawawahoge/binary-tree/core"
 )
 
-type binarySearchTreeNode struct {
+type balancedBSTNode struct {
 	key   int
 	value string
-	left  *binarySearchTreeNode
-	right *binarySearchTreeNode
+	left  *balancedBSTNode
+	right *balancedBSTNode
 }
 
-type binarySearchTree struct {
+type balancedBST struct {
 	core.IndexTree
-	root *binarySearchTreeNode
+	root *balancedBSTNode
 }
 
-// NewBinarySearchTree is a constructor of binary search tree.
-func NewBinarySearchTree() core.IndexTree {
-	return &binarySearchTree{
+// NewBalancedBST is a constructor of binary search tree.
+func NewBalancedBST() core.IndexTree {
+	return &balancedBST{
 		root: nil,
 	}
 }
 
-func newBinarySearchTreeNode(key int, value string) *binarySearchTreeNode {
-	return &binarySearchTreeNode{
+func newBalancedBSTNode(key int, value string) *balancedBSTNode {
+	return &{
 		key:   key,
 		value: value,
 		left:  nil,
@@ -35,7 +35,7 @@ func newBinarySearchTreeNode(key int, value string) *binarySearchTreeNode {
 }
 
 // Search is a method to search node with key by binary search.
-func (t *binarySearchTree) Search(key int) (*string, int, error) {
+func (t *balancedBST) Search(key int) (*string, int, error) {
 	node, dep, err := search(t.root, key, 1)
 	if err != nil {
 		return nil, 0, err
@@ -46,7 +46,7 @@ func (t *binarySearchTree) Search(key int) (*string, int, error) {
 	return &node.value, dep, nil
 }
 
-func search(node *binarySearchTreeNode, key int, dep int) (*binarySearchTreeNode, int, error) {
+func search(node *balancedBSTNode, key int, dep int) (*balancedBSTNode, int, error) {
 	if key < node.key && node.left != nil {
 		return search(node.left, key, dep+1)
 	} else if key > node.key && node.right != nil {
@@ -59,9 +59,9 @@ func search(node *binarySearchTreeNode, key int, dep int) (*binarySearchTreeNode
 }
 
 // Insert is a method to insert a node by binary search.
-func (t *binarySearchTree) Insert(key int, value string) error {
+func (t *balancedBST) Insert(key int, value string) error {
 	if t.root == nil {
-		t.root = newBinarySearchTreeNode(key, value)
+		t.root = newBalancedBSTNode(key, value)
 		return nil
 	}
 	err := insert(t.root, key, value)
@@ -71,10 +71,10 @@ func (t *binarySearchTree) Insert(key int, value string) error {
 	return nil
 }
 
-func insert(node *binarySearchTreeNode, key int, value string) error {
+func insert(node *balancedBSTNode, key int, value string) error {
 	if key < node.key {
 		if node.left == nil {
-			node.left = newBinarySearchTreeNode(key, value)
+			node.left = newBalancedBSTNode(key, value)
 			return nil
 		}
 		if err := insert(node.left, key, value); err != nil {
@@ -82,7 +82,7 @@ func insert(node *binarySearchTreeNode, key int, value string) error {
 		}
 	} else {
 		if node.right == nil {
-			node.right = newBinarySearchTreeNode(key, value)
+			node.right = newBalancedBSTNode(key, value)
 			return nil
 		}
 		if err := insert(node.right, key, value); err != nil {
@@ -92,7 +92,7 @@ func insert(node *binarySearchTreeNode, key int, value string) error {
 	return nil
 }
 
-func (t *binarySearchTree) InsertAll(data map[int]string) error {
+func (t *balancedBST) InsertAll(data map[int]string) error {
 	for k, v := range data {
 		err := t.Insert(k, v)
 		if err != nil {
@@ -107,7 +107,7 @@ func (t *binarySearchTree) Delete(key int) error {
 	panic("not implemented yet")
 }
 
-func (t *binarySearchTree) PrintTree(gw *core.GraphWrapper) {
+func (t *balancedBST) PrintTree(gw *core.GraphWrapper) {
 	depthTree := make(map[int]int)
 	if t.root == nil {
 		panic("no node exists")
@@ -116,13 +116,11 @@ func (t *binarySearchTree) PrintTree(gw *core.GraphWrapper) {
 	fmt.Println(depthTree)
 }
 
-func print(node *binarySearchTreeNode, depth int, depthTree map[int]int, gw *core.GraphWrapper) {
+func print(node *balancedBSTNode, depth int, depthTree map[int]int, gw *core.GraphWrapper) {
 	depthTree[depth]++
-	// gw.MustAddNode(fmt.Sprintf("'key=%d value=%s'", node.key, node.value))
 	gw.MustAddNode(node.value)
 	fmt.Println(node.value)
 
-	// fmt.Printf("%d key=%d value=%s\n", depth, node.key, node.value)
 	if node.left != nil {
 		src := node.value
 		dst := node.left.value
