@@ -2,7 +2,6 @@ package bst
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/zawawahoge/binary-tree/core"
 )
@@ -109,34 +108,43 @@ func (t *binarySearchTree) Delete(key int) error {
 }
 
 func (t *binarySearchTree) PrintTree(gw *core.GraphWrapper) {
-	depthTree := make(map[int]int)
 	if t.root == nil {
 		panic("no node exists")
 	}
-	print(t.root, 1, depthTree, gw)
-	fmt.Println(depthTree)
+	print(t.root, 1, gw)
 }
 
-func print(node *binarySearchTreeNode, depth int, depthTree map[int]int, gw *core.GraphWrapper) {
-	depthTree[depth]++
-	// gw.MustAddNode(fmt.Sprintf("'key=%d value=%s'", node.key, node.value))
-	attrs := map[string]string{
-		"label": strconv.Itoa(node.key),
-	}
-	gw.MustAddNode(node.value, attrs)
-	fmt.Println(node.value)
-
-	// fmt.Printf("%d key=%d value=%s\n", depth, node.key, node.value)
+func print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, int) {
+	var hl, hr int
 	if node.left != nil {
 		src := node.value
 		dst := node.left.value
 		gw.MustAddEdge(src, dst, true)
-		print(node.left, depth+1, depthTree, gw)
+		l, r := print(node.left, depth+1, gw)
+		if l < r {
+			l = r
+		}
+		hl = l + 1
+	} else {
+		hl = 0
 	}
 	if node.right != nil {
 		src := node.value
 		dst := node.right.value
 		gw.MustAddEdge(src, dst, true)
-		print(node.right, depth+1, depthTree, gw)
+		l, r := print(node.right, depth+1, gw)
+		if l > r {
+			r = l
+		}
+		hr = r + 1
+	} else {
+		hr = 0
 	}
+
+	attrs := map[string]string{
+		// "label": strconv.Itoa(hl - hr),
+		"label": fmt.Sprintf("\"%d\n%d,%d\"", node.key, hl, hr),
+	}
+	gw.MustAddNode(node.value, attrs)
+	return hl, hr
 }

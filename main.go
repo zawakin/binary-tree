@@ -20,7 +20,7 @@ func createTree() core.IndexTree {
 	rand.Seed(time.Now().UnixNano())
 
 	for i := 0; i < NumberOfNodes; i++ {
-		k := rand.Intn(NumberOfNodes)
+		k := rand.Intn(NumberOfNodes * 10)
 		v := randomHashString(4)
 		binarySearchTree.Insert(k, v)
 	}
