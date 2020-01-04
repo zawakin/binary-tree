@@ -118,7 +118,7 @@ func (t *balancedBST) PrintTree(gw *core.GraphWrapper) {
 
 func print(node *balancedBSTNode, depth int, depthTree map[int]int, gw *core.GraphWrapper) {
 	depthTree[depth]++
-	gw.MustAddNode(node.value)
+	gw.MustAddNode(node.value, nil)
 	fmt.Println(node.value)
 
 	if node.left != nil {

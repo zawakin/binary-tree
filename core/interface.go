@@ -35,8 +35,17 @@ func NewGraphWrapper(name string) *GraphWrapper {
 }
 
 // MustAddNode is a method to add node with no error.
-func (gw *GraphWrapper) MustAddNode(name string) {
-	if err := gw.G.AddNode(gw.G.Name, name, gw.NodeAttrs); err != nil {
+func (gw *GraphWrapper) MustAddNode(name string, nodeAttrs map[string]string) {
+	attrs := make(map[string]string)
+	for k, v := range gw.NodeAttrs {
+		attrs[k] = v
+	}
+	if nodeAttrs != nil {
+		for k, v := range nodeAttrs {
+			attrs[k] = v
+		}
+	}
+	if err := gw.G.AddNode(gw.G.Name, name, attrs); err != nil {
 		panic(err)
 	}
 }

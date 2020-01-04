@@ -3,6 +3,7 @@ package main
 import (
 	"math/rand"
 	"os"
+	"time"
 
 	"github.com/zawawahoge/binary-tree/bst"
 	"github.com/zawawahoge/binary-tree/core"
@@ -10,13 +11,16 @@ import (
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
+// NumberOfNodes is a number of nodes drawn.
+const NumberOfNodes int = 100
+
 func createTree() core.IndexTree {
 	binarySearchTree := bst.NewBinarySearchTree()
 
-	N := 1000
+	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < N; i++ {
-		k := rand.Intn(10 * N)
+	for i := 0; i < NumberOfNodes; i++ {
+		k := rand.Intn(NumberOfNodes)
 		v := randomHashString(4)
 		binarySearchTree.Insert(k, v)
 	}
@@ -39,7 +43,8 @@ func main() {
 	nodeAttrs["fontname"] = "\"Arial\""
 	// nodeAttrs["color"] = "7"
 	// nodeAttrs["fillcolor"] = "11"
-	nodeAttrs["shape"] = "point"
+	// nodeAttrs["shape"] = "point"
+	nodeAttrs["label"] = "test"
 
 	// Edge設定
 	edgeAttrs := graphWrapper.EdgeAttrs

@@ -2,6 +2,7 @@ package bst
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/zawawahoge/binary-tree/core"
 )
@@ -119,7 +120,10 @@ func (t *binarySearchTree) PrintTree(gw *core.GraphWrapper) {
 func print(node *binarySearchTreeNode, depth int, depthTree map[int]int, gw *core.GraphWrapper) {
 	depthTree[depth]++
 	// gw.MustAddNode(fmt.Sprintf("'key=%d value=%s'", node.key, node.value))
-	gw.MustAddNode(node.value)
+	attrs := map[string]string{
+		"label": strconv.Itoa(node.key),
+	}
+	gw.MustAddNode(node.value, attrs)
 	fmt.Println(node.value)
 
 	// fmt.Printf("%d key=%d value=%s\n", depth, node.key, node.value)
