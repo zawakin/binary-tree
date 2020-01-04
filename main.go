@@ -4,7 +4,6 @@ import (
 	"math/rand"
 	"os"
 
-	"github.com/awalterschulze/gographviz"
 	"github.com/zawawahoge/binary-tree/bst"
 	"github.com/zawawahoge/binary-tree/core"
 )
@@ -25,33 +24,11 @@ func createTree() core.IndexTree {
 }
 
 func main() {
-	graphWrapper := &core.GraphWrapper{
-		G:         gographviz.NewGraph(),
-		NodeAttrs: make(map[string]string),
-		EdgeAttrs: make(map[string]string),
-	}
-	g := graphWrapper.G
-	if err := g.SetName("G"); err != nil {
-		panic(err)
-	}
-	// 有向グラフか
-	if err := g.SetDir(true); err != nil {
-		panic(err)
-	}
+	graphWrapper := core.NewGraphWrapper("G")
 
-	// グラフ全体の設定
-	// if err := g.AddAttr("G", "bgcolor", "\"#343434\""); err != nil {
-	// 	panic(err)
-	// }
-	if err := g.AddAttr("G", "layout", "dot"); err != nil {
-		panic(err)
-	}
-	if err := g.AddAttr("G", "nodesep", "0.2"); err != nil {
-		panic(err)
-	}
-	if err := g.AddAttr("G", "ranksep", "0.8"); err != nil {
-		panic(err)
-	}
+	graphWrapper.MustAddAttr("layout", "dot")
+	graphWrapper.MustAddAttr("nodesep", "0.2")
+	graphWrapper.MustAddAttr("ranksep", "0.8")
 
 	// Node設定
 	nodeAttrs := graphWrapper.NodeAttrs
@@ -72,8 +49,11 @@ func main() {
 	tree.PrintTree(graphWrapper)
 
 	// dotファイル出力
-	s := g.String()
-	file, err := os.Create(`./binary-search-tree.dot`)
+	s := graphWrapper.G.String()
+	if _, err := os.Stat("output"); os.IsNotExist(err) {
+		os.Mkdir("output", 0777)
+	}
+	file, err := os.Create(`output/graph.dot`)
 	if err != nil {
 		panic(err)
 	}

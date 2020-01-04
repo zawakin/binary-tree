@@ -1,4 +1,4 @@
-package B-bst
+package balancedbst
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func NewBalancedBST() core.IndexTree {
 }
 
 func newBalancedBSTNode(key int, value string) *balancedBSTNode {
-	return &{
+	return &balancedBSTNode{
 		key:   key,
 		value: value,
 		left:  nil,
@@ -103,7 +103,7 @@ func (t *balancedBST) InsertAll(data map[int]string) error {
 }
 
 // Delete is a method to delete a node by binary search.
-func (t *binarySearchTree) Delete(key int) error {
+func (t *balancedBST) Delete(key int) error {
 	panic("not implemented yet")
 }
 

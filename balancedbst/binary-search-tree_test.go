@@ -1,9 +1,9 @@
-package bst
+package balancedbst
 
 import "testing"
 
 func Test_bst_Search(t *testing.T) {
-	binarySearchTree := NewBinarySearchTree()
+	binarySearchTree := NewBalancedBST()
 	data := map[int]string{
 		3: "C",
 		1: "A",
