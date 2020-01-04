@@ -1,4 +1,4 @@
-package balancedbst
+package balanced-bst
 
 import "testing"
 
