@@ -1,4 +1,4 @@
-package balanced-bst
+package balancedbst
 
 import (
 	"fmt"
