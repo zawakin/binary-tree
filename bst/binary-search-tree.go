@@ -141,9 +141,20 @@ func print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, i
 		hr = 0
 	}
 
+	coef := (hl - hr)
+	if coef < 0 {
+		coef = -coef
+	}
+	coef++
+	if coef > 9 {
+		coef = 9
+	}
+
 	attrs := map[string]string{
 		// "label": strconv.Itoa(hl - hr),
-		"label": fmt.Sprintf("\"%d\n%d,%d\"", node.key, hl, hr),
+		// "label": fmt.Sprintf("\"%d\n%d,%d\"", node.key, hl, hr),
+		"label":     fmt.Sprintf("\"%d,%d\"", node.key, hl-hr),
+		"fillcolor": fmt.Sprintf("%d", coef),
 	}
 	gw.MustAddNode(node.value, attrs)
 	return hl, hr

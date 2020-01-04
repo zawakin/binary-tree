@@ -36,15 +36,14 @@ func main() {
 
 	// Node設定
 	nodeAttrs := graphWrapper.NodeAttrs
-	// nodeAttrs["colorscheme"] = "rdylgn11"
-	// nodeAttrs["style"] = "\"solid,filled\""
+	nodeAttrs["colorscheme"] = "ylgn9"
+	nodeAttrs["style"] = "\"solid,filled\""
 	// nodeAttrs["fontcolor"] = "6"
 	// nodeAttrs["fontname"] = "\"Migu 1M\""
-	nodeAttrs["fontname"] = "\"Arial\""
+	// nodeAttrs["fontname"] = "\"Arial\""
 	// nodeAttrs["color"] = "7"
 	// nodeAttrs["fillcolor"] = "11"
 	// nodeAttrs["shape"] = "point"
-	nodeAttrs["label"] = "test"
 
 	// Edge設定
 	edgeAttrs := graphWrapper.EdgeAttrs
