@@ -27,7 +27,7 @@ func createTree() core.IndexTree {
 	return binarySearchTree
 }
 
-func main() {
+func newDefaultGraphWrapper() *core.GraphWrapper {
 	graphWrapper := core.NewGraphWrapper("G")
 
 	graphWrapper.MustAddAttr("layout", "dot")
@@ -48,6 +48,13 @@ func main() {
 	// Edge設定
 	edgeAttrs := graphWrapper.EdgeAttrs
 	edgeAttrs["color"] = "black"
+
+	return graphWrapper
+}
+
+func main() {
+
+	graphWrapper := newDefaultGraphWrapper()
 
 	tree := createTree()
 	tree.PrintTree(graphWrapper)

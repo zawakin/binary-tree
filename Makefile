@@ -1,6 +1,14 @@
+dotfiles = $(wildcard output/*.dot)
+pngfiles = $(dotfiles:%.dot=%.png)
+
+image: $(pngfiles)
+
 graph:
 	go run *.go
-	dot -Tpng output/graph.dot > output/graph.png
+	make image
+
+%.png: %.dot
+	dot -Tpng $< > $@
 
 clean:
-	rm -r output/
+	rm output/*.png

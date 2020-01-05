@@ -153,7 +153,7 @@ func print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, i
 	attrs := map[string]string{
 		// "label": strconv.Itoa(hl - hr),
 		// "label": fmt.Sprintf("\"%d\n%d,%d\"", node.key, hl, hr),
-		"label":     fmt.Sprintf("\"%d,%d\"", node.key, hl-hr),
+		"label":     fmt.Sprintf("\"%d\n%d\"", node.key, hl-hr),
 		"fillcolor": fmt.Sprintf("%d", coef),
 	}
 	gw.MustAddNode(node.value, attrs)
