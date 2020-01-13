@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"os"
 
-	"github.com/zawawahoge/binary-tree/balancedbst"
 	"github.com/zawawahoge/binary-tree/bst"
 	"github.com/zawawahoge/binary-tree/core"
 )
@@ -21,16 +20,16 @@ func main() {
 		os.Mkdir("output", 0777)
 	}
 
-	// binarySearchTree := bst.NewBinarySearchTree()
-	binarySearchTree := balancedbst.NewbalancedBinarySearchTree()
+	tree := bst.NewBinarySearchTree()
+	// binarySearchTree := balancedbst.NewbalancedBinarySearchTree()
 
 	for i := 0; i < NumberOfNodes; i++ {
 		k := rand.Intn(NumberOfNodes * 10)
 		v := randomHashString(4)
-		binarySearchTree.Insert(k, v)
+		tree.Insert(k, v)
 
 		graphWrapper := newDefaultGraphWrapper()
-		binarySearchTree.PrintTree(graphWrapper)
+		tree.PrintTree(graphWrapper)
 
 		s := graphWrapper.G.String()
 		file, err := os.Create(fmt.Sprintf("output/%04d.dot", i))
@@ -41,17 +40,6 @@ func main() {
 		file.Write([]byte(s))
 	}
 
-}
-
-func createTree() core.IndexTree {
-	binarySearchTree := bst.NewBinarySearchTree()
-
-	for i := 0; i < NumberOfNodes; i++ {
-		k := rand.Intn(NumberOfNodes * 10)
-		v := randomHashString(4)
-		binarySearchTree.Insert(k, v)
-	}
-	return binarySearchTree
 }
 
 func newDefaultGraphWrapper() *core.GraphWrapper {
