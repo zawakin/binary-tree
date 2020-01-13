@@ -6,27 +6,49 @@ import (
 	"github.com/zawawahoge/binary-tree/core"
 )
 
-type balancedBSTNode struct {
+type balancedBinarySearchTreeNode struct {
 	key   int
 	value string
-	left  *balancedBSTNode
-	right *balancedBSTNode
+	left  *balancedBinarySearchTreeNode
+	right *balancedBinarySearchTreeNode
 }
 
-type balancedBST struct {
+type balancedBinarySearchTree struct {
 	core.IndexTree
-	root *balancedBSTNode
+	root    *balancedBinarySearchTreeNode
+	history treeHistory
 }
 
-// NewBalancedBST is a constructor of binary search tree.
-func NewBalancedBST() core.IndexTree {
-	return &balancedBST{
-		root: nil,
+type treeHistory struct {
+	lastOperatedNode []*balancedBinarySearchTreeNode
+}
+
+func newTreeHistory() *treeHistory {
+	nodes := make([]*balancedBinarySearchTreeNode, 1000)
+	return &treeHistory{
+		lastOperatedNode: nodes,
 	}
 }
 
-func newBalancedBSTNode(key int, value string) *balancedBSTNode {
-	return &balancedBSTNode{
+func (hist *treeHistory) append(node *balancedBinarySearchTreeNode) {
+	fmt.Println(node)
+	hist.lastOperatedNode = append(hist.lastOperatedNode, node)
+}
+
+func (t *balancedBinarySearchTree) lastAddedNode() *balancedBinarySearchTreeNode {
+	return t.history.lastOperatedNode[len(t.history.lastOperatedNode)-1]
+}
+
+// NewbalancedBinarySearchTree is a constructor of binary search tree.
+func NewbalancedBinarySearchTree() core.IndexTree {
+	return &balancedBinarySearchTree{
+		root:    nil,
+		history: treeHistory{},
+	}
+}
+
+func newbalancedBinarySearchTreeNode(key int, value string) *balancedBinarySearchTreeNode {
+	return &balancedBinarySearchTreeNode{
 		key:   key,
 		value: value,
 		left:  nil,
@@ -35,7 +57,7 @@ func newBalancedBSTNode(key int, value string) *balancedBSTNode {
 }
 
 // Search is a method to search node with key by binary search.
-func (t *balancedBST) Search(key int) (*string, int, error) {
+func (t *balancedBinarySearchTree) Search(key int) (*string, int, error) {
 	node, dep, err := search(t.root, key, 1)
 	if err != nil {
 		return nil, 0, err
@@ -46,7 +68,7 @@ func (t *balancedBST) Search(key int) (*string, int, error) {
 	return &node.value, dep, nil
 }
 
-func search(node *balancedBSTNode, key int, dep int) (*balancedBSTNode, int, error) {
+func search(node *balancedBinarySearchTreeNode, key int, dep int) (*balancedBinarySearchTreeNode, int, error) {
 	if key < node.key && node.left != nil {
 		return search(node.left, key, dep+1)
 	} else if key > node.key && node.right != nil {
@@ -59,40 +81,46 @@ func search(node *balancedBSTNode, key int, dep int) (*balancedBSTNode, int, err
 }
 
 // Insert is a method to insert a node by binary search.
-func (t *balancedBST) Insert(key int, value string) error {
+func (t *balancedBinarySearchTree) Insert(key int, value string) error {
 	if t.root == nil {
-		t.root = newBalancedBSTNode(key, value)
+		t.root = newbalancedBinarySearchTreeNode(key, value)
+		t.history.append(t.root)
 		return nil
 	}
-	err := insert(t.root, key, value)
+	node, err := insert(t.root, key, value)
 	if err != nil {
 		return err
 	}
+	t.history.append(node)
 	return nil
 }
 
-func insert(node *balancedBSTNode, key int, value string) error {
+func insert(node *balancedBinarySearchTreeNode, key int, value string) (*balancedBinarySearchTreeNode, error) {
+	var err error
+	var lastAddedNode *balancedBinarySearchTreeNode
 	if key < node.key {
 		if node.left == nil {
-			node.left = newBalancedBSTNode(key, value)
-			return nil
+			node.left = newbalancedBinarySearchTreeNode(key, value)
+			return node.left, nil
 		}
-		if err := insert(node.left, key, value); err != nil {
-			return err
+		lastAddedNode, err = insert(node.left, key, value)
+		if err != nil {
+			return nil, err
 		}
 	} else {
 		if node.right == nil {
-			node.right = newBalancedBSTNode(key, value)
-			return nil
+			node.right = newbalancedBinarySearchTreeNode(key, value)
+			return node.right, nil
 		}
-		if err := insert(node.right, key, value); err != nil {
-			return err
+		lastAddedNode, err = insert(node.right, key, value)
+		if err != nil {
+			return nil, err
 		}
 	}
-	return nil
+	return lastAddedNode, nil
 }
 
-func (t *balancedBST) InsertAll(data map[int]string) error {
+func (t *balancedBinarySearchTree) InsertAll(data map[int]string) error {
 	for k, v := range data {
 		err := t.Insert(k, v)
 		if err != nil {
@@ -103,34 +131,63 @@ func (t *balancedBST) InsertAll(data map[int]string) error {
 }
 
 // Delete is a method to delete a node by binary search.
-func (t *balancedBST) Delete(key int) error {
+func (t *balancedBinarySearchTree) Delete(key int) error {
 	panic("not implemented yet")
 }
 
-func (t *balancedBST) PrintTree(gw *core.GraphWrapper) {
-	depthTree := make(map[int]int)
+func (t *balancedBinarySearchTree) PrintTree(gw *core.GraphWrapper) {
 	if t.root == nil {
 		panic("no node exists")
 	}
-	print(t.root, 1, depthTree, gw)
-	fmt.Println(depthTree)
+	t.print(t.root, 1, gw)
 }
 
-func print(node *balancedBSTNode, depth int, depthTree map[int]int, gw *core.GraphWrapper) {
-	depthTree[depth]++
-	gw.MustAddNode(node.value, nil)
-	fmt.Println(node.value)
-
+func (t *balancedBinarySearchTree) print(node *balancedBinarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, int) {
+	var hl, hr int
 	if node.left != nil {
 		src := node.value
 		dst := node.left.value
 		gw.MustAddEdge(src, dst, true)
-		print(node.left, depth+1, depthTree, gw)
+		l, r := t.print(node.left, depth+1, gw)
+		if l < r {
+			l = r
+		}
+		hl = l + 1
+	} else {
+		hl = 0
 	}
 	if node.right != nil {
 		src := node.value
 		dst := node.right.value
 		gw.MustAddEdge(src, dst, true)
-		print(node.right, depth+1, depthTree, gw)
+		l, r := t.print(node.right, depth+1, gw)
+		if l > r {
+			r = l
+		}
+		hr = r + 1
+	} else {
+		hr = 0
 	}
+
+	coef := (hl - hr)
+	if coef < 0 {
+		coef = -coef
+	}
+	coef++
+	if coef > 9 {
+		coef = 9
+	}
+
+	attrs := map[string]string{
+		"label":     fmt.Sprintf("\"%d\n%d\"", node.key, hl-hr),
+		"fillcolor": fmt.Sprintf("%d", coef),
+	}
+	if node == t.lastAddedNode() {
+		attrs["fillcolor"] = "black"
+		attrs["fixedsize"] = "true"
+		attrs["width"] = "1.1"
+		attrs["height"] = "1.1"
+	}
+	gw.MustAddNode(node.value, attrs)
+	return hl, hr
 }

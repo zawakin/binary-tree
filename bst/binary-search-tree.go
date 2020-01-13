@@ -31,7 +31,6 @@ func newTreeHistory() *treeHistory {
 }
 
 func (hist *treeHistory) append(node *binarySearchTreeNode) {
-	fmt.Println(node)
 	hist.lastOperatedNode = append(hist.lastOperatedNode, node)
 }
 
@@ -183,7 +182,6 @@ func (t *binarySearchTree) print(node *binarySearchTreeNode, depth int, gw *core
 		"fillcolor": fmt.Sprintf("%d", coef),
 	}
 	if node == t.lastAddedNode() {
-		fmt.Println("fill")
 		attrs["fillcolor"] = "black"
 		attrs["fixedsize"] = "true"
 		attrs["width"] = "1.1"
