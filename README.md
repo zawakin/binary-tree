@@ -13,3 +13,6 @@ $ make graph
 ```
 $ make clean
 ```
+
+## Binary search tree
+![Binary search tree](https://github.com/zawawahoge/binary-tree/blob/master/binary-search.gif?raw=true)
