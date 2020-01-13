@@ -15,13 +15,35 @@ type binarySearchTreeNode struct {
 
 type binarySearchTree struct {
 	core.IndexTree
-	root *binarySearchTreeNode
+	root    *binarySearchTreeNode
+	history treeHistory
+}
+
+type treeHistory struct {
+	lastOperatedNode []*binarySearchTreeNode
+}
+
+func newTreeHistory() *treeHistory {
+	nodes := make([]*binarySearchTreeNode, 1000)
+	return &treeHistory{
+		lastOperatedNode: nodes,
+	}
+}
+
+func (hist *treeHistory) append(node *binarySearchTreeNode) {
+	fmt.Println(node)
+	hist.lastOperatedNode = append(hist.lastOperatedNode, node)
+}
+
+func (t *binarySearchTree) lastAddedNode() *binarySearchTreeNode {
+	return t.history.lastOperatedNode[len(t.history.lastOperatedNode)-1]
 }
 
 // NewBinarySearchTree is a constructor of binary search tree.
 func NewBinarySearchTree() core.IndexTree {
 	return &binarySearchTree{
-		root: nil,
+		root:    nil,
+		history: treeHistory{},
 	}
 }
 
@@ -62,34 +84,40 @@ func search(node *binarySearchTreeNode, key int, dep int) (*binarySearchTreeNode
 func (t *binarySearchTree) Insert(key int, value string) error {
 	if t.root == nil {
 		t.root = newBinarySearchTreeNode(key, value)
+		t.history.append(t.root)
 		return nil
 	}
-	err := insert(t.root, key, value)
+	node, err := insert(t.root, key, value)
 	if err != nil {
 		return err
 	}
+	t.history.append(node)
 	return nil
 }
 
-func insert(node *binarySearchTreeNode, key int, value string) error {
+func insert(node *binarySearchTreeNode, key int, value string) (*binarySearchTreeNode, error) {
+	var err error
+	var lastAddedNode *binarySearchTreeNode
 	if key < node.key {
 		if node.left == nil {
 			node.left = newBinarySearchTreeNode(key, value)
-			return nil
+			return node.left, nil
 		}
-		if err := insert(node.left, key, value); err != nil {
-			return err
+		lastAddedNode, err = insert(node.left, key, value)
+		if err != nil {
+			return nil, err
 		}
 	} else {
 		if node.right == nil {
 			node.right = newBinarySearchTreeNode(key, value)
-			return nil
+			return node.right, nil
 		}
-		if err := insert(node.right, key, value); err != nil {
-			return err
+		lastAddedNode, err = insert(node.right, key, value)
+		if err != nil {
+			return nil, err
 		}
 	}
-	return nil
+	return lastAddedNode, nil
 }
 
 func (t *binarySearchTree) InsertAll(data map[int]string) error {
@@ -111,16 +139,16 @@ func (t *binarySearchTree) PrintTree(gw *core.GraphWrapper) {
 	if t.root == nil {
 		panic("no node exists")
 	}
-	print(t.root, 1, gw)
+	t.print(t.root, 1, gw)
 }
 
-func print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, int) {
+func (t *binarySearchTree) print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, int) {
 	var hl, hr int
 	if node.left != nil {
 		src := node.value
 		dst := node.left.value
 		gw.MustAddEdge(src, dst, true)
-		l, r := print(node.left, depth+1, gw)
+		l, r := t.print(node.left, depth+1, gw)
 		if l < r {
 			l = r
 		}
@@ -132,7 +160,7 @@ func print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, i
 		src := node.value
 		dst := node.right.value
 		gw.MustAddEdge(src, dst, true)
-		l, r := print(node.right, depth+1, gw)
+		l, r := t.print(node.right, depth+1, gw)
 		if l > r {
 			r = l
 		}
@@ -151,10 +179,15 @@ func print(node *binarySearchTreeNode, depth int, gw *core.GraphWrapper) (int, i
 	}
 
 	attrs := map[string]string{
-		// "label": strconv.Itoa(hl - hr),
-		// "label": fmt.Sprintf("\"%d\n%d,%d\"", node.key, hl, hr),
 		"label":     fmt.Sprintf("\"%d\n%d\"", node.key, hl-hr),
 		"fillcolor": fmt.Sprintf("%d", coef),
+	}
+	if node == t.lastAddedNode() {
+		fmt.Println("fill")
+		attrs["fillcolor"] = "black"
+		attrs["fixedsize"] = "true"
+		attrs["width"] = "1.1"
+		attrs["height"] = "1.1"
 	}
 	gw.MustAddNode(node.value, attrs)
 	return hl, hr

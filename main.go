@@ -1,10 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"os"
-	"time"
 
+	"github.com/zawawahoge/binary-tree/balancedbst"
 	"github.com/zawawahoge/binary-tree/bst"
 	"github.com/zawawahoge/binary-tree/core"
 )
@@ -14,10 +15,36 @@ var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 // NumberOfNodes is a number of nodes drawn.
 const NumberOfNodes int = 100
 
+func main() {
+
+	if _, err := os.Stat("output"); os.IsNotExist(err) {
+		os.Mkdir("output", 0777)
+	}
+
+	// binarySearchTree := bst.NewBinarySearchTree()
+	binarySearchTree := balancedbst.NewbalancedBinarySearchTree()
+
+	for i := 0; i < NumberOfNodes; i++ {
+		k := rand.Intn(NumberOfNodes * 10)
+		v := randomHashString(4)
+		binarySearchTree.Insert(k, v)
+
+		graphWrapper := newDefaultGraphWrapper()
+		binarySearchTree.PrintTree(graphWrapper)
+
+		s := graphWrapper.G.String()
+		file, err := os.Create(fmt.Sprintf("output/%04d.dot", i))
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		file.Write([]byte(s))
+	}
+
+}
+
 func createTree() core.IndexTree {
 	binarySearchTree := bst.NewBinarySearchTree()
-
-	rand.Seed(time.Now().UnixNano())
 
 	for i := 0; i < NumberOfNodes; i++ {
 		k := rand.Intn(NumberOfNodes * 10)
@@ -50,27 +77,6 @@ func newDefaultGraphWrapper() *core.GraphWrapper {
 	edgeAttrs["color"] = "black"
 
 	return graphWrapper
-}
-
-func main() {
-
-	graphWrapper := newDefaultGraphWrapper()
-
-	tree := createTree()
-	tree.PrintTree(graphWrapper)
-
-	// dotファイル出力
-	s := graphWrapper.G.String()
-	if _, err := os.Stat("output"); os.IsNotExist(err) {
-		os.Mkdir("output", 0777)
-	}
-	file, err := os.Create(`output/graph.dot`)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	file.Write([]byte(s))
-
 }
 
 func randomHashString(n int) string {
